@@ -3,10 +3,14 @@ from publishers import Publisher
 from subscribers import Subscriber
 
 
+def separador(titulo):
+    print("\n" + "=" * 60)
+    print(f" {titulo}")
+    print("=" * 60)
+
+
 def main():
-    print("=" * 60)
-    print(" SMART HOME - SISTEMA PUB/SUB")
-    print("=" * 60)
+    separador("SMART HOME - SISTEMA PUB/SUB")
 
     # Criação do Broker
     broker = PubSub()
@@ -49,7 +53,7 @@ def main():
         "Sistema de Climatização"
     )
 
-    print("\n--- REALIZANDO INSCRIÇÕES ---")
+    separador("REALIZANDO INSCRIÇÕES")
 
     broker.subscribe(
         "Sala_Presenca",
@@ -81,9 +85,13 @@ def main():
         sistema_climatizacao
     )
 
-    print("\n" + "=" * 60)
-    print(" SIMULAÇÃO DOS EVENTOS")
-    print("=" * 60)
+    # ---------------------------------------------------------
+    # CENÁRIO 1
+    # ---------------------------------------------------------
+
+    separador(
+        "CENÁRIO 1 - FUNCIONAMENTO NORMAL"
+    )
 
     sensor_presenca.publicar(
         "Sala_Presenca",
@@ -105,9 +113,19 @@ def main():
         "Temperatura atual do quarto: 28°C."
     )
 
-    print("\n" + "=" * 60)
-    print(" TESTE DE UNSUBSCRIBE")
-    print("=" * 60)
+    # ---------------------------------------------------------
+    # CENÁRIO 2
+    # ---------------------------------------------------------
+
+    separador(
+        "CENÁRIO 2 - UNSUBSCRIBE PARCIAL"
+    )
+
+    print(
+        "\nO Aplicativo do Morador deixará de receber "
+        "alertas de fumaça, mas a Central de Alarme "
+        "continuará inscrita."
+    )
 
     broker.unsubscribe(
         "Cozinha_Fumaca",
@@ -119,9 +137,31 @@ def main():
         "Novo alerta de fumaça detectado!"
     )
 
-    print("\n" + "=" * 60)
-    print(" FIM DA SIMULAÇÃO")
-    print("=" * 60)
+    # ---------------------------------------------------------
+    # CENÁRIO 3
+    # ---------------------------------------------------------
+
+    separador(
+        "CENÁRIO 3 - TÓPICO SEM ASSINANTES"
+    )
+
+    print(
+        "\nO Sistema de Iluminação será removido "
+        "de Sala_Presenca. Depois disso, o tópico "
+        "ficará sem assinantes."
+    )
+
+    broker.unsubscribe(
+        "Sala_Presenca",
+        sistema_iluminacao
+    )
+
+    sensor_presenca.publicar(
+        "Sala_Presenca",
+        "Novo movimento detectado na sala."
+    )
+
+    separador("FIM DA SIMULAÇÃO")
 
 
 if __name__ == "__main__":
